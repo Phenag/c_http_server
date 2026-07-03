@@ -1,14 +1,12 @@
-#include <asm-generic/socket.h>
 #include <netdb.h>
 #include <netinet/in.h>
 #include <signal.h>
-#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <sys/socket.h>
 #include <unistd.h>
 
+#include "arena.h"
 #include "http_request.h"
 #include "read_http.h"
 #include "server.h"
@@ -16,8 +14,10 @@
 
 int sfd = -1;
 
-void handle_sigint(int sig) {
-  if (sfd != -1) {
+void handle_sigint(int sig)
+{
+  if (sfd != -1)
+  {
     close(sfd);
   }
 
@@ -25,23 +25,27 @@ void handle_sigint(int sig) {
   exit(0);
 }
 
-void start_server(struct addrinfo *addr) {
+void start_server(struct addrinfo *addr)
+{
   sfd = socket(addr->ai_family, addr->ai_socktype, 0);
   signal(SIGINT, handle_sigint);
 
-  if (sfd == -1) {
+  if (sfd == -1)
+  {
     perror("socket");
     return;
   }
   int yes = 1;
 
   setsockopt(sfd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int));
-  if (bind(sfd, addr->ai_addr, addr->ai_addrlen) < 0) {
+  if (bind(sfd, addr->ai_addr, addr->ai_addrlen) < 0)
+  {
     perror("bind");
     return;
   }
 
-  if (listen(sfd, 5) < 0) {
+  if (listen(sfd, 5) < 0)
+  {
     perror("listen");
     return;
   }
@@ -49,15 +53,17 @@ void start_server(struct addrinfo *addr) {
   printf("Listening\n");
   fflush(stdout);
 
-  struct sockaddr *client_addr;
-  socklen_t client_addr_size;
+  struct sockaddr_in client_addr = {0};
+  socklen_t client_addr_size = sizeof(client_addr);
 
   arena a;
   init_arena(&a, 2);
 
-  while (1) {
-    int fd = accept(sfd, client_addr, &client_addr_size);
-    if (fd < 0) {
+  while (1)
+  {
+    int fd = accept(sfd, (struct sockaddr *)&client_addr, &client_addr_size);
+    if (fd < 0)
+    {
       perror("accept");
       continue;
     }
@@ -68,7 +74,8 @@ void start_server(struct addrinfo *addr) {
 
     read_http(fd, req, &raw_request, &raw_request_size, &a);
 
-    if (is_upgrade_request(req)) {
+    if (is_upgrade_request(req))
+    {
       printf("Upgrading to WebSocket\n");
       fflush(stdout);
       handle_ws_req(fd, req);
@@ -84,10 +91,12 @@ void start_server(struct addrinfo *addr) {
             "text/plain; charset=utf8\r\n\r\n",
             raw_request_size - 1);
 
-    if (send(fd, buf, strlen(buf), 0) < 1) {
+    if (send(fd, buf, strlen(buf), 0) < 1)
+    {
       perror("send");
     }
-    if (send(fd, raw_request, raw_request_size, 0) < 1) {
+    if (send(fd, raw_request, raw_request_size, 0) < 1)
+    {
       perror("send");
     }
 

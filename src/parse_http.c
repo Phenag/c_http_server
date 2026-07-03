@@ -1,7 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
-#include <sys/types.h>
 
 #include "http_request.h"
 #include "parse_http.h"
@@ -13,7 +10,8 @@
 // Accept: */*\r\n
 // \r\n
 
-char *read_block(char *buffer, char *start, char ch, char *name) {
+char *read_block(char *buffer, char *start, char ch, char *name)
+{
   char *ptr = strchr(start, ' ');
   memcpy(buffer, start, ptr - start);
   buffer[ptr - start] = 0;
@@ -24,7 +22,8 @@ char *read_block(char *buffer, char *start, char ch, char *name) {
   return ptr + 1;
 }
 
-int parse_http(char *request, size_t size, http_request *req, arena *a) {
+int parse_http(char *request, size_t size, http_request *req, arena *a)
+{
   char *ptr = read_block(req->method, request, ' ', "Method");
   ptr = read_block(req->path, ptr, ' ', "Path");
   ptr = strchr(ptr, '\n') + 1;
@@ -37,7 +36,8 @@ int parse_http(char *request, size_t size, http_request *req, arena *a) {
 
   http_header *header = headers;
 
-  while (*ptr) {
+  while (*ptr)
+  {
     char *newptr = strchr(ptr, ':');
     int size = newptr - ptr;
     char *name_buffer = allocate(size + 1, a);
@@ -61,10 +61,12 @@ int parse_http(char *request, size_t size, http_request *req, arena *a) {
 
     ptr = newptr + 2;
 
-    if (*ptr == 0) {
+    if (*ptr == 0)
+    {
       break;
     }
-    if (*ptr == '\r') {
+    if (*ptr == '\r')
+    {
       // INFO: end of the headers
       break;
     }

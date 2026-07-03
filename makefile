@@ -1,9 +1,9 @@
 CC      = gcc
-CFLAGS  = -Wall -O2
+CFLAGS  = -Wall -O2 -I include
 LDFLAGS =
 TARGET  = server
 
-SRC = crypto.c http_request.c main.c parse_http.c read_http.c utils.c ws.c server.c ws_message.c arena.c
+SRC = src/http_request.c src/main.c src/parse_http.c src/read_http.c src/utils.c src/ws.c src/server.c src/ws_message.c src/arena.c
 OBJ = $(SRC:.c=.o)
 
 all: $(TARGET)
