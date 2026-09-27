@@ -97,11 +97,9 @@ void start_server(struct addrinfo *addr)
     }
     if (send(fd, raw_request, raw_request_size, 0) < 1)
     {
-      perror("send");
+      perror("send body");
     }
 
-    // printf("Response sent\n");
-    // fflush(stdout);
     // TODO: Fix the memory management issues
     // free(raw_request);
     // for (int i = 0; i < req->headers_count; i++) {

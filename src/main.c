@@ -4,7 +4,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <sys/socket.h>
-
 #include "server.h"
 
 int main()
@@ -18,7 +17,7 @@ int main()
   hints.ai_socktype = SOCK_STREAM;
   hints.ai_flags = AI_PASSIVE; // Use my IP
 
-  int error = getaddrinfo(NULL, "8080", &hints, &res);
+  int error = getaddrinfo(NULL, "8081", &hints, &res);
   if (error != 0)
   {
     fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(error));
